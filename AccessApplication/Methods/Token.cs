@@ -3,7 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Usuario.Methods;
+namespace AccessApplication.Methods;
 
 public class Token(IConfiguration configuration)
 {
@@ -14,7 +14,7 @@ public class Token(IConfiguration configuration)
 
         var tokenConfig = new SecurityTokenDescriptor
         {
-            Subject = new System.Security.Claims.ClaimsIdentity(new Claim[] {
+            Subject = new ClaimsIdentity(new Claim[] {
             new Claim(ClaimTypes.Role , role)
         }),
             Expires = DateTime.UtcNow.AddHours(3),

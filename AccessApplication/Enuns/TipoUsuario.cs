@@ -1,4 +1,4 @@
-﻿namespace Usuario.Enuns
+﻿namespace AccessApplication.Enuns
 {
     public enum TipoUsuario
     {

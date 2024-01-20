@@ -1,16 +1,16 @@
-﻿using Usuario.Enuns;
+﻿using AccessApplication.Abstract;
+using AccessApplication.Enuns;
 
-namespace Usuario.Entities;
+namespace AccessApplication.Entities;
 
-public class UsuarioAccess
+public class UserAccess : Entity
 {
-    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
     public string ConfirmPassword { get; set; }
     public TipoUsuario UserType { get; set; }
-    public UsuarioAccess()
+    public UserAccess()
     {
         
     }
