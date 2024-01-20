@@ -21,8 +21,14 @@ public static class MapAuth
         {
             if (userAccess != null)
             {
-                await context.UserAccess.AddAsync(userAccess);
-                return Results.Ok(await context.SaveChangesAsync() > 0);
+                userAccess.Password =  new PasswordCryptography(userAccess.Password).HashPassword(userAccess.Password);
+                userAccess.ConfirmPassword = new PasswordCryptography(userAccess.ConfirmPassword).HashPassword(userAccess.ConfirmPassword);
+
+                if (userAccess.Password.Equals(userAccess.ConfirmPassword))
+                {
+                    await context.UserAccess.AddAsync(userAccess);
+                    return Results.Ok(await context.SaveChangesAsync() > 0);
+                }
             }
             return Results.BadRequest();
         }
@@ -37,14 +43,17 @@ public static class MapAuth
     {
         try
         {
-            var user = await context.UserAccess.Where(u => u.Email.Equals(authentication.Email) && u.Password.Equals(authentication.Password)).FirstOrDefaultAsync();
 
-            if (authentication.Email == user.Email && authentication.Password == user.Password)
-                if (user.UserType == Enuns.TipoUsuario.Client)
-                    return Results.Ok(new Token(configuration).Create("Cliente"));
-                else
-                    return Results.Ok(new Token(configuration).Create("Empregado"));
-
+            var user = await context.UserAccess.Where(u => u.Email.Equals(authentication.Email) && u.Password.Equals(new PasswordCryptography(authentication.Password).HashPassword(authentication.Password))).FirstOrDefaultAsync();
+            if (user != null)
+            {
+                var verify = new PasswordCryptography(authentication.Password).VerifyPassword(authentication.Password, user.Password);
+                if (authentication.Email == user.Email && verify)
+                    if (user.UserType == Enuns.TipoUsuario.Client)
+                        return Results.Ok(new Token(configuration).Create("Cliente"));
+                    else
+                        return Results.Ok(new Token(configuration).Create("Empregado"));
+            }
             return Results.BadRequest();
         }
         catch (Exception)
