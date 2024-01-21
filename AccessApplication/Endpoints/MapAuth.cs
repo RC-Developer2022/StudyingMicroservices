@@ -4,6 +4,7 @@ using AccessApplication.Methods;
 using AccessApplication.Record;
 using AccessApplication.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyModel;
 
 namespace AccessApplication.Endpoints;
 
@@ -11,8 +12,44 @@ public static class MapAuth
 {
     public static void MapAccess(this WebApplication app)
     {
+        app.MapPut("Forgot/Password", (ForgotPassword));
         app.MapPost("/register", UserCreate).WithName(nameof(UserCreate)).WithOpenApi();
         app.MapPost("connect/token", PostToken).WithName("TokenAccessApplication").WithOpenApi();
+    }
+
+    public static async Task<IResult> ForgotPassword([FromBody] UserAccess userAccess, [FromHeader] Guid Id, [FromServices]AppDbContext context) 
+    {
+        try
+        {
+            var user = await context.UserAccess.Where(u => u.Id.Equals(Id)).FirstOrDefaultAsync();
+            if (user != null)
+            {
+                var  password = new PasswordCryptography(userAccess.Password).HashPassword(userAccess.Password);
+                var confirmPassword = new PasswordCryptography(userAccess.ConfirmPassword).HashPassword(userAccess.ConfirmPassword);
+
+                if (password.Equals(user.Password))
+                    return Results.Problem("Sua senha não pode ser igual a anterior");
+
+                if (password != user.Password) 
+                {
+                    if (confirmPassword.Equals(password)) 
+                    {
+                        user.Password = password;
+                        user.ConfirmPassword = confirmPassword;
+                        context.Update(user);
+                        return Results.Ok( await context.SaveChangesAsync() > 0 );
+                    }
+                    return Results.Problem("imcompatíveis");
+                }
+
+            }
+            return null;
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     public static async Task<IResult> UserCreate([FromBody]UserAccess userAccess, [FromServices] AppDbContext context) 
