@@ -12,20 +12,20 @@ public static class MapAuth
 {
     public static void MapAccess(this WebApplication app)
     {
-        app.MapPut("Forgot/Password", (ForgotPassword));
+        app.MapPut("Forgot/Password", (ForgotPassword)).WithName(nameof(ForgotPassword)).WithOpenApi();
         app.MapPost("/register", UserCreate).WithName(nameof(UserCreate)).WithOpenApi();
         app.MapPost("connect/token", PostToken).WithName("TokenAccessApplication").WithOpenApi();
     }
 
-    public static async Task<IResult> ForgotPassword([FromBody] UserAccess userAccess, [FromHeader] Guid Id, [FromServices]AppDbContext context) 
+    public static async Task<IResult> ForgotPassword([FromBody] PasswordForgot passwordForgot, [FromHeader] Guid Id, [FromServices]AppDbContext context) 
     {
         try
         {
             var user = await context.UserAccess.Where(u => u.Id.Equals(Id)).FirstOrDefaultAsync();
             if (user != null)
             {
-                var  password = new PasswordCryptography(userAccess.Password).HashPassword(userAccess.Password);
-                var confirmPassword = new PasswordCryptography(userAccess.ConfirmPassword).HashPassword(userAccess.ConfirmPassword);
+                var  password = new PasswordCryptography(passwordForgot.Password).HashPassword(passwordForgot.Password);
+                var confirmPassword = new PasswordCryptography(passwordForgot.ConfirmPassword).HashPassword(passwordForgot.ConfirmPassword);
 
                 if (password.Equals(user.Password))
                     return Results.Problem("Sua senha não pode ser igual a anterior");
