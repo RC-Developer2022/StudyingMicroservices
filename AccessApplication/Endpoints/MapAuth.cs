@@ -4,7 +4,6 @@ using AccessApplication.Methods;
 using AccessApplication.Record;
 using AccessApplication.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyModel;
 
 namespace AccessApplication.Endpoints;
 
@@ -39,7 +38,7 @@ public static class MapAuth
                         context.Update(user);
                         return Results.Ok( await context.SaveChangesAsync() > 0 );
                     }
-                    return Results.Problem("imcompatíveis");
+                    return Results.BadRequest("imcompatíveis");
                 }
 
             }
