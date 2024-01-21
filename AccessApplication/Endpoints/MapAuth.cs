@@ -13,7 +13,7 @@ public static class MapAuth
     {
         app.MapPut("Forgot/Password", (ForgotPassword)).WithName(nameof(ForgotPassword)).WithOpenApi();
         app.MapPost("/register", UserCreate).WithName(nameof(UserCreate)).WithOpenApi();
-        app.MapPost("connect/token", PostToken).WithName("TokenAccessApplication").WithOpenApi();
+        app.MapPost("login/token", PostToken).WithName("TokenAccessApplication").WithOpenApi();
     }
 
     public static async Task<IResult> ForgotPassword([FromBody] PasswordForgot passwordForgot, [FromHeader] Guid Id, [FromServices]AppDbContext context) 
