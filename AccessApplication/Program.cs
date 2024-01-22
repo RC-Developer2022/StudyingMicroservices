@@ -1,8 +1,8 @@
-using Microsoft.OpenApi.Models;
 using AccessApplication.Endpoints;
-using AccessApplication.Record;
 using AccessApplication.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +18,16 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+    if (!context.Database.CanConnect())
+    {
+        context.Database.EnsureCreated();
+    }
+    context.Database.Migrate();    
 }
 
 app.UseHttpsRedirection();
