@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-
-namespace AccessApplication.Abstract;
+﻿namespace AccessApplication.Abstract;
 
 public abstract class Entity
 {

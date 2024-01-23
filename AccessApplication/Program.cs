@@ -1,7 +1,6 @@
 using AccessApplication.Endpoints;
 using AccessApplication.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,11 +22,11 @@ if (app.Environment.IsDevelopment())
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
     var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
-    if (!context.Database.CanConnect())
+    if (!await context.Database.CanConnectAsync())
     {
-        context.Database.EnsureCreated();
+        await context.Database.EnsureCreatedAsync();
     }
-    context.Database.Migrate();    
+    await context.Database.MigrateAsync();    
 }
 
 app.UseHttpsRedirection();
