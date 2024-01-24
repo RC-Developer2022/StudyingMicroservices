@@ -17,17 +17,18 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+    {
+        var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+        if (!await context.Database.CanConnectAsync())
+        {
+            await context.Database.EnsureCreatedAsync();
+        }
+        await context.Database.MigrateAsync();    
+    }
 }
 
-using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
-{
-    var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
-    if (!await context.Database.CanConnectAsync())
-    {
-        await context.Database.EnsureCreatedAsync();
-    }
-    await context.Database.MigrateAsync();    
-}
 
 app.UseHttpsRedirection();
 

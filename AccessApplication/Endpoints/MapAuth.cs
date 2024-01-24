@@ -38,11 +38,11 @@ public static class MapAuth
                         context.Update(user);
                         return Results.Ok( await context.SaveChangesAsync() > 0 );
                     }
-                    return Results.BadRequest("imcompatíveis");
+                    return Results.BadRequest("incompatíveis");
                 }
 
             }
-            return null;
+            return default;
         }
         catch (Exception)
         {
@@ -86,9 +86,9 @@ public static class MapAuth
                 var verify = new PasswordCryptography(authentication.Password).VerifyPassword(authentication.Password, user.Password);
                 if (authentication.Email == user.Email && verify)
                     if (user.UserType == Enuns.TipoUsuario.Client)
-                        return Results.Ok(new Token(configuration).Create("Cliente"));
+                        return Results.Ok(new Token(configuration).Create(Enuns.TipoUsuario.Client.ToString(), user.Email, user.Name));
                     else
-                        return Results.Ok(new Token(configuration).Create("Empregado"));
+                        return Results.Ok(new Token(configuration).Create(Enuns.TipoUsuario.Employee.ToString(), user.Email, user.Name));
             }
             return Results.BadRequest();
         }

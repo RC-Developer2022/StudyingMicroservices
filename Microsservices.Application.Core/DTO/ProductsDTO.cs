@@ -4,13 +4,13 @@ namespace Microsservices.Application.Core.DTO;
 
 public class ProductsDTO
 {
-    public string Name { get; private set; }
-    public string CategoryId { get; private set; }
-    public Category Category { get; private set; }
-    public string Description { get; private set; }
-    public bool HasStock { get; private set; }
-    public bool Active { get; private set; } = true;
-    public decimal Price { get; private set; }
+    public string Name { get;  set; }
+    public string CategoryId { get;  set; }
+    public Category Category { get;  set; }
+    public string Description { get;  set; }
+    public bool HasStock { get;  set; }
+    public bool Active { get;  set; } = true;
+    public decimal Price { get;  set; }
     public string CreatedBy { get; set; }
     public DateTime CreatedOn { get; set; }
     public string EditedBy { get; set; }
